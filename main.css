@@ -1,3 +1,12 @@
 .hide {
     display: none;
 }
+.column-large {
+    width: 55%;
+}
+.column-medium {
+    width: 20%;
+}
+.column-small {
+    width: 5%;
+}

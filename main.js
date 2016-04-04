@@ -71,17 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             row =   '<tr>' +
-                        '<td>' +
+                        '<td class="data column-large">' +
                             '<div class="grid-flex vertical">' +
-                                '<span style="font-size: 12px;">Stage ' + stage_number + ' / Group ' + group_number + ' / Round ' + round_number + '</span>' +
-                                '<br />' +
-                                '<strong>' + opponent1_name + '</strong><br/>' + ' vs ' + '<br/><strong>' + opponent2_name + '</strong>' +
+                                '<div><span style="font-size: 12px;">Stage ' + stage_number + ' / Group ' + group_number + ' / Round ' + round_number + '</span></div>' +
+                                '<div><strong>' + opponent1_name + '</strong>' + ' vs ' + '<strong>' + opponent2_name + '</strong></div>' +
                             '</div>' +
                         '</td>' +
-                        '<td><div class="form-row"><div class="form-field"><input type="text" class="date" value="' + date + '" placeholder="JJ/MM/AAAA" /></div></div></td>' +
-                        '<td><div class="form-row"><div class="form-field"><input type="text" class="time" value="' + time + '" placeholder="HH:MM" /></div></div></td>' +
-                        '<td>' +
-                            '<button data-match="' + match_id + '" data-tournament="' + tournament_id + '" class="button-save-match pure-button pure-button-primary">Save</button>' +
+                        '<td class="data column-medium"><div class="form-row"><div class="form-field"><input type="text" class="date" value="' + date + '" placeholder="JJ/MM/AAAA" /></div></div></td>' +
+                        '<td class="data column-medium"><div class="form-row"><div class="form-field"><input type="text" class="time" value="' + time + '" placeholder="HH:MM" /></div></div></td>' +
+                        '<td class="actions column-small">' +
+                            '<ul class="button-list layout-right collapsed">' +
+                                '<li><a data-match="' + match_id + '" data-tournament="' + tournament_id + '" class="button button-save-match light"><i class="fa-pencil"></i></a></li>' +
+                            '</ul>' +
                         '</td>' +
                     '</tr>'
             ;
