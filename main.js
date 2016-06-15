@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var     apiKeyInput             = document.getElementById('api-key'),
+    var apiKeyInput             = document.getElementById('api-key'),
         clientIdInput           = document.getElementById('api-client-id'),
         clientSecretInput       = document.getElementById('api-client-secret'),
         accessToken             = null,
@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     apiKeyInput.value = getParameterByName('api_key');
     clientIdInput.value = getParameterByName('client_id');
     clientSecretInput.value = getParameterByName('client_secret');
+    var toornamentApi = new Toornament({
+        apiKey: getParameterByName('api_key'),
+        clientId: getParameterByName('client_id'),
+        clientSecret: getParameterByName('client_secret')
+    });
 
     var onTournamentImportSuccess = function(data) {
         for(i=0; i<views.length; i++) {
@@ -204,11 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
         r.send();
     };
 
-    var importTournamentsAction = function(e) {
-        e.preventDefault();
-        importTournamentList(apiKeyInput.value, accessToken, onTournamentImportSuccess, onTournamentImportFailure);
-    };
-
     var importMatchesAction = function(e){
         e.preventDefault();
         importMatchList(e.target.dataset.id, apiKeyInput.value, accessToken, onMatchImportSuccess, onMatchImportFailure);
@@ -230,7 +230,11 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     };
 
-    document.getElementById('button-import-tournament').addEventListener('click', importTournamentsAction);
+    document.getElementById('button-import-tournament').addEventListener('click', function(e) {
+        e.preventDefault();
+        toornamentApi.callApi('my_tournament_list', {}, onTournamentImportSuccess, onTournamentImportFailure);
+        toornamentApi.run();
+    });
 }, false );
 
 function getParameterByName(name) {
