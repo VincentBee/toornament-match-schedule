@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
         matchListContainer      = document.getElementById('match-list-container'),
         matchList               = matchListContainer.getElementsByTagName('tbody')[0];
 
+    var tournamentRowTemplate = null;
+    var matchRowTemplate = null;
+
     moment.locale('fr');
     apiKeyInput.value = getParameterByName('api_key');
     clientIdInput.value = getParameterByName('client_id');
@@ -17,6 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
         apiKey: getParameterByName('api_key'),
         clientId: getParameterByName('client_id'),
         clientSecret: getParameterByName('client_secret')
+    });
+
+    get('views/tournament_row.html', function(template) {
+        tournamentRowTemplate = template;
+    });
+
+    get('views/match_row.html', function(template) {
+        matchRowTemplate = template;
     });
 
     var importMatchesAction = function(e){
@@ -105,30 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 tournamentList.innerHTML = '';
 
-                for(i=0; i<data.length; i++) {
-                    id = data[i].id;
-                    name = data[i].name;
-                    discipline = data[i].discipline;
-                    size = data[i].size;
-                    isPublic = data[i].public?'public':'draft';
+                data.forEach(function (value) {
+                    tournamentList.innerHTML += Mustache.render(tournamentRowTemplate, {
+                        'id':               value.id,
+                        'name':             value.name,
+                        'discipline':       value.discipline,
+                        'size':             value.size,
+                        'isPublic':         value.public?'public':'draft'
+                    });
+                });
 
-                    row =   '<tr>' +
-                        '<td>'+name+'</td>' +
-                        '<td>'+discipline+'</td>' +
-                        '<td>'+size+'</td>' +
-                        '<td>'+isPublic+'</td>' +
-                        '<td>' +
-                        '<button data-id="'+id+'" class="button-import-matches pure-button pure-button-primary">Edit</button>' +
-                        '</td>' +
-                        '</tr>'
-                    ;
-                    tournamentList.innerHTML += row;
-                }
-
-                var importMatchButtons = tournamentList.getElementsByClassName('button-import-matches');
-                for (var i=0; i<importMatchButtons.length; i++){
-                    importMatchButtons[i].addEventListener('click', importMatchesAction);
-                }
+                [].forEach.call(tournamentList.getElementsByClassName('button-import-matches'), function(element) {
+                    element.addEventListener('click', importMatchesAction);
+                });
                 tournamentListContainer.className = 'view';
             },
             function (status, data) {
@@ -146,4 +146,20 @@ function getParameterByName(name) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+/**
+ * Load a resource through an ajax request.
+ *
+ * @param url
+ * @param callback
+ */
+function get(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState != 4 || httpRequest.status != 200) return;
+        callback(httpRequest.responseText);
+    };
+    httpRequest.open('GET', url);
+    httpRequest.send();
 }
