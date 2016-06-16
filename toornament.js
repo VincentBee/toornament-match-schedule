@@ -92,6 +92,18 @@
         return headers;
     };
 
+    Toornament.prototype.getRequestContent = function(targetResource, attributes) {
+        switch (targetResource) {
+            case 'save_match':
+                return {
+                    date:      attributes.date,
+                    timezone:  attributes.timezone
+                };
+        }
+
+        return null;
+    };
+
     Toornament.prototype.generateAccessToken = function(previousRequest) {
         var toornament = this;
         this.queue.unshift(previousRequest);
@@ -124,9 +136,12 @@
             method:                 this.getTargetMethod(targetResource),
             targetUrl:              this.getTargetUrl(targetResource, attributes),
             headers:                this.getHeaders(targetResource),
+            content:                this.getRequestContent(targetResource, attributes),
             successHandler:         successHandler || null,
             errorHandler:           errorHandler || null
         });
+
+        return this;
     };
 
     Toornament.prototype.sendRequest = function(request) {
@@ -137,7 +152,7 @@
             return this.generateAccessToken(request);
         }
 
-        xhr.open('GET', request.targetUrl, true);
+        xhr.open(request.method, request.targetUrl, true);
         for (var index in request.headers) {
             xhr.setRequestHeader(index, request.headers[index]);
         }
@@ -156,7 +171,7 @@
             }
         };
 
-        xhr.send();
+        xhr.send(request.content!== null ? JSON.stringify(request.content): null);
     };
 
     Toornament.prototype.run = function() {
